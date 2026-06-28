@@ -66,12 +66,6 @@ h3 {
     margin-top: 0;
 }
 
-.add-box {
-    display: flex;
-    gap: 8px;
-    margin-bottom: 12px;
-}
-
 input,
 textarea {
     width: 100%;
@@ -164,6 +158,22 @@ button {
     color: white;
 }
 
+/* 统一点击手感：电脑 / iPad / 手机都不拖拽，只点击 */
+.student-card,
+.seat {
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
+    touch-action: manipulation;
+    user-select: none;
+    cursor: pointer;
+}
+
+/* 座位里的人名禁止被长按选中文字 */
+.seat-name {
+    user-select: none;
+    pointer-events: none;
+}
+
 .seat-title {
     display: flex;
     justify-content: space-between;
@@ -186,7 +196,7 @@ button {
     overflow-x: auto;
 }
 
-/* 左侧窗户：已改窄，并贴近座位 */
+/* 左侧窗户：窄版，并贴近座位 */
 .window-side {
     width: 40px;
     flex: 0 0 40px;
@@ -332,6 +342,12 @@ button {
     }
 }
 
+/* 点击或长按时给一点反馈 */
+.student-card:active,
+.seat:active {
+    transform: scale(0.98);
+}
+
 .seat.filled {
     background: #111;
     color: white;
@@ -469,14 +485,6 @@ button {
         padding: 16px;
     }
 
-    .add-box {
-        flex-direction: column;
-    }
-
-    .add-box button {
-        width: 100%;
-    }
-
     .btn-row {
         flex-direction: column;
     }
@@ -491,28 +499,6 @@ button {
         padding: 8px 12px;
         font-size: 13px;
         margin-bottom: 7px;
-    }
-
-    /* 统一点击手感：电脑 / iPad / 手机都不拖拽，只点击 */
-    .student-card,
-    .seat {
-        -webkit-tap-highlight-color: transparent;
-        -webkit-touch-callout: none;
-        touch-action: manipulation;
-        user-select: none;
-        cursor: pointer;
-    }
-
-    /* 座位里的人名也禁止被长按选中文字 */
-    .seat-name {
-        user-select: none;
-        pointer-events: none;
-    }
-
-    /* 长按时给一点点反馈，手感更明显 */
-    .student-card:active,
-    .seat:active {
-        transform: scale(0.98);
     }
 
     .seat-title {
