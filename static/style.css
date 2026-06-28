@@ -158,6 +158,51 @@ button {
     color: white;
 }
 
+.student-card.selected {
+    background: #111;
+    color: white;
+}
+
+/* 未安排同学标题 + 修改/删除按钮 */
+.waiting-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    margin-top: 24px;
+    margin-bottom: 12px;
+}
+
+.waiting-header h3 {
+    margin: 0;
+}
+
+.waiting-actions {
+    display: flex;
+    gap: 6px;
+    flex-shrink: 0;
+}
+
+.mini-btn {
+    width: auto;
+    padding: 7px 11px;
+    border-radius: 12px;
+    font-size: 12px;
+    background: #333;
+}
+
+.delete-mini-btn {
+    background: #b8b8b8;
+    color: #111;
+}
+
+.mini-btn:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
 /* 统一点击手感：电脑 / iPad / 手机都不拖拽，只点击 */
 .student-card,
 .seat {
@@ -364,6 +409,21 @@ button {
     .seat.selected-seat {
         outline-width: 2px;
         outline-offset: 2px;
+    }
+
+    .waiting-header {
+        margin-top: 28px;
+        margin-bottom: 12px;
+    }
+
+    .waiting-actions {
+        gap: 6px;
+    }
+
+    .waiting-actions .mini-btn {
+        width: auto;
+        padding: 7px 10px;
+        font-size: 12px;
     }
 }
 
