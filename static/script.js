@@ -337,6 +337,23 @@ function deleteSelectedStudent() {
     renderAll();
 }
 
+function cancelSelectionByBlankClick(event) {
+    const clickedOnUsefulElement = event.target.closest(
+        ".student-card, .seat, .waiting-actions, button, textarea, input"
+    );
+
+    // 如果点的是同学、座位、按钮、输入框，就不取消
+    if (clickedOnUsefulElement) {
+        return;
+    }
+
+    // 如果点的是空白区域，并且当前有选中的同学，就取消选择
+    if (selectedStudentId !== null) {
+        clearSelection();
+        renderAll();
+    }
+}
+
 function clearSeats() {
     seats = Array(TOTAL_SEATS).fill(null);
     clearSelection();
@@ -356,3 +373,5 @@ function resetAll() {
     localStorage.clear();
     renderAll();
 }
+
+document.addEventListener("click", cancelSelectionByBlankClick);
