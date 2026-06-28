@@ -1,0 +1,635 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: "Microsoft YaHei", "PingFang SC", Arial, sans-serif;
+    background:
+        radial-gradient(circle at top left, #f4f4f4, transparent 35%),
+        linear-gradient(135deg, #ffffff, #eeeeee);
+    color: #222;
+}
+
+.page {
+    min-height: 100vh;
+    padding: 32px;
+}
+
+header {
+    text-align: center;
+    margin-bottom: 28px;
+}
+
+header h1 {
+    margin: 0;
+    font-size: 38px;
+    letter-spacing: 3px;
+    font-weight: 900;
+}
+
+header p {
+    color: #777;
+    margin-top: 10px;
+    font-size: 16px;
+}
+
+.main-box {
+    display: flex;
+    gap: 28px;
+    max-width: 1350px;
+    margin: 0 auto;
+}
+
+.control-panel,
+.seat-panel {
+    background: rgba(255, 255, 255, 0.88);
+    border: 1px solid #ddd;
+    border-radius: 28px;
+    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.08);
+}
+
+.control-panel {
+    width: 330px;
+    padding: 24px;
+    flex-shrink: 0;
+}
+
+.seat-panel {
+    flex: 1;
+    padding: 24px;
+    overflow-x: auto;
+}
+
+h2,
+h3 {
+    margin-top: 0;
+}
+
+.add-box {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+input,
+textarea {
+    width: 100%;
+    border: 1px solid #ccc;
+    border-radius: 16px;
+    padding: 12px 14px;
+    outline: none;
+    background: #fafafa;
+    color: #222;
+    font-size: 14px;
+}
+
+input:focus,
+textarea:focus {
+    border-color: #111;
+    background: white;
+}
+
+textarea {
+    height: 90px;
+    resize: none;
+    margin-bottom: 10px;
+}
+
+button {
+    border: none;
+    border-radius: 16px;
+    padding: 11px 15px;
+    background: #111;
+    color: white;
+    cursor: pointer;
+    font-weight: bold;
+    transition: 0.2s;
+    white-space: nowrap;
+}
+
+button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.16);
+}
+
+.secondary-btn {
+    width: 100%;
+    background: #444;
+    margin-bottom: 14px;
+}
+
+.danger-btn {
+    width: 100%;
+    background: #b8b8b8;
+    color: #111;
+    margin-top: 10px;
+}
+
+.btn-row {
+    display: flex;
+    gap: 8px;
+}
+
+.btn-row button {
+    width: 100%;
+}
+
+.waiting-list {
+    min-height: 160px;
+    border: 1px dashed #bbb;
+    border-radius: 20px;
+    padding: 12px;
+    background: #f7f7f7;
+}
+
+.student-card {
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 999px;
+    padding: 9px 13px;
+    margin-bottom: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    display: inline-block;
+    margin-right: 6px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    user-select: none;
+}
+
+.student-card.selected {
+    background: #111;
+    color: white;
+}
+
+.seat-title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.seat-title span {
+    color: #777;
+    font-size: 14px;
+}
+
+/* 教室布局：左边窗户，右边黑板、讲台、座位 */
+.classroom-layout {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    overflow-x: auto;
+}
+
+/* 左侧窗户：已改窄，并贴近座位 */
+.window-side {
+    width: 40px;
+    flex: 0 0 40px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding-top: 186px;
+}
+
+.window-box {
+    height: 78px;
+    border: 2px solid #cfcfcf;
+    border-radius: 8px;
+    background:
+        linear-gradient(to right, transparent 47%, #cfcfcf 47%, #cfcfcf 53%, transparent 53%),
+        linear-gradient(to bottom, transparent 47%, #cfcfcf 47%, #cfcfcf 53%, transparent 53%),
+        linear-gradient(135deg, #fdfdfd, #e8eef2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #9a9a9a;
+    font-size: 11px;
+    font-weight: 600;
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.65);
+}
+
+.classroom-main {
+    width: max-content;
+    flex: 0 0 auto;
+}
+
+/* 黑板和讲台 */
+.front-area {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 24px;
+}
+
+.blackboard {
+    width: 420px;
+    max-width: 100%;
+    height: 92px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #4b4b4b, #2f2f2f);
+    border: 8px solid #8b8b8b;
+    color: #f5f5f5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    font-weight: 800;
+    letter-spacing: 4px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+}
+
+.podium {
+    width: 150px;
+    height: 56px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #d8d8d8, #bdbdbd);
+    border: 1.5px solid #b3b3b3;
+    color: #333;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    font-weight: 700;
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.08);
+}
+
+/* 座位表 */
+.seat-map {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    width: max-content;
+    margin: 0 auto;
+}
+
+.seat-row {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+/* 每两列为一组，所以第 2、4、6 个座位后面加大一点间距 */
+.seat-row .seat:nth-child(2),
+.seat-row .seat:nth-child(4),
+.seat-row .seat:nth-child(6) {
+    margin-right: 22px;
+}
+
+.seat {
+    width: 88px;
+    height: 78px;
+    flex: 0 0 88px;
+
+    border: 1.5px solid #cfcfcf;
+    background: #fbfbfb;
+    border-radius: 12px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+
+    position: relative;
+    transition: 0.2s;
+    font-size: 14px;
+    color: #999;
+    padding: 8px;
+    word-break: break-all;
+}
+
+.seat:hover {
+    background: #f0f0f0;
+    transform: translateY(-2px);
+}
+
+.seat.filled {
+    background: #111;
+    color: white;
+    border-color: #111;
+    font-weight: bold;
+}
+
+.seat.drag-over {
+    outline: 3px dashed #999;
+    background: #e9e9e9;
+}
+
+.seat-number {
+    position: absolute;
+    top: 7px;
+    left: 10px;
+    font-size: 11px;
+    opacity: 0.45;
+}
+
+.remove-btn {
+    position: absolute;
+    top: 6px;
+    right: 7px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: white;
+    color: #111;
+    font-size: 12px;
+    padding: 0;
+    display: none;
+    line-height: 20px;
+    text-align: center;
+}
+
+.seat.filled .remove-btn {
+    display: block;
+}
+
+.empty-text {
+    color: #aaa;
+    font-size: 13px;
+}
+
+/* iPad / 平板端 */
+@media (max-width: 1180px) {
+    .page {
+        padding: 24px;
+    }
+
+    .main-box {
+        flex-direction: column;
+        gap: 22px;
+    }
+
+    .control-panel {
+        width: 100%;
+    }
+
+    .seat-panel {
+        width: 100%;
+        overflow-x: auto;
+    }
+
+    .classroom-layout {
+        justify-content: center;
+        gap: 8px;
+        overflow-x: auto;
+    }
+
+    .window-side {
+        width: 32px;
+        flex: 0 0 32px;
+        gap: 14px;
+        padding-top: 170px;
+    }
+
+    .window-box {
+        height: 74px;
+        border-radius: 7px;
+        font-size: 10px;
+    }
+
+    .classroom-main {
+        width: max-content;
+        flex: 0 0 auto;
+    }
+
+    .blackboard {
+        width: 340px;
+        height: 82px;
+        font-size: 24px;
+    }
+
+    .podium {
+        width: 130px;
+        height: 50px;
+        font-size: 16px;
+    }
+
+    .seat-map {
+        width: max-content;
+        margin: 0 auto;
+    }
+
+    .seat {
+        width: 84px;
+        height: 74px;
+        flex: 0 0 84px;
+        border-radius: 11px;
+    }
+
+    .seat-row .seat:nth-child(2),
+    .seat-row .seat:nth-child(4),
+    .seat-row .seat:nth-child(6) {
+        margin-right: 18px;
+    }
+
+    .waiting-list {
+        min-height: 100px;
+    }
+}
+
+/* 手机端 */
+@media (max-width: 650px) {
+    .page {
+        padding: 14px;
+    }
+
+    header {
+        margin-bottom: 18px;
+    }
+
+    header h1 {
+        font-size: 26px;
+        letter-spacing: 1px;
+    }
+
+    header p {
+        font-size: 13px;
+        line-height: 1.6;
+    }
+
+    .control-panel,
+    .seat-panel {
+        border-radius: 22px;
+        padding: 16px;
+    }
+
+    .add-box {
+        flex-direction: column;
+    }
+
+    .add-box button {
+        width: 100%;
+    }
+
+    .btn-row {
+        flex-direction: column;
+    }
+
+    button {
+        width: 100%;
+        padding: 12px 14px;
+        font-size: 14px;
+    }
+
+    .student-card {
+        padding: 8px 12px;
+        font-size: 13px;
+        margin-bottom: 7px;
+    }
+
+    .seat-title {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 6px;
+    }
+
+    .seat-title h2 {
+        margin-bottom: 0;
+    }
+
+    .seat-title span {
+        font-size: 12px;
+    }
+
+    .seat-panel {
+        overflow-x: auto;
+    }
+
+    .classroom-layout {
+        justify-content: flex-start;
+        gap: 6px;
+        width: max-content;
+        min-width: 100%;
+    }
+
+    .classroom-main {
+        width: max-content;
+        flex: 0 0 auto;
+    }
+
+    .window-side {
+        width: 28px;
+        flex: 0 0 28px;
+        gap: 10px;
+        padding-top: 130px;
+    }
+
+    .window-box {
+        height: 64px;
+        border-radius: 6px;
+        font-size: 9px;
+    }
+
+    .front-area {
+        gap: 10px;
+        margin-bottom: 18px;
+    }
+
+    .blackboard {
+        width: 220px;
+        height: 62px;
+        border-width: 6px;
+        border-radius: 8px;
+        font-size: 18px;
+        letter-spacing: 2px;
+    }
+
+    .podium {
+        width: 95px;
+        height: 40px;
+        border-radius: 8px;
+        font-size: 14px;
+    }
+
+    .seat-map {
+        width: max-content;
+        min-width: 560px;
+        margin: 0;
+        gap: 10px;
+    }
+
+    .seat-row {
+        display: flex;
+        gap: 6px;
+        align-items: center;
+        justify-content: flex-start;
+    }
+
+    .seat-row .seat:nth-child(2),
+    .seat-row .seat:nth-child(4),
+    .seat-row .seat:nth-child(6) {
+        margin-right: 10px;
+    }
+
+    .seat {
+        width: 58px;
+        height: 64px;
+        flex: 0 0 58px;
+        border-radius: 10px;
+        font-size: 12px;
+        padding: 6px;
+    }
+
+    .seat-number {
+        top: 5px;
+        left: 7px;
+        font-size: 9px;
+    }
+
+    .remove-btn {
+        top: 4px;
+        right: 4px;
+        width: 17px;
+        height: 17px;
+        font-size: 10px;
+        line-height: 17px;
+    }
+
+    input,
+    textarea {
+        font-size: 14px;
+        border-radius: 14px;
+    }
+}
+
+/* 超小屏手机 */
+@media (max-width: 420px) {
+    .seat-map {
+        min-width: 520px;
+    }
+
+    .seat-row {
+        display: flex;
+        gap: 5px;
+    }
+
+    .seat-row .seat:nth-child(2),
+    .seat-row .seat:nth-child(4),
+    .seat-row .seat:nth-child(6) {
+        margin-right: 8px;
+    }
+
+    .seat {
+        width: 53px;
+        height: 60px;
+        flex: 0 0 53px;
+        border-radius: 9px;
+        font-size: 11px;
+    }
+
+    .window-side {
+        width: 24px;
+        flex: 0 0 24px;
+        gap: 10px;
+        padding-top: 130px;
+    }
+
+    .window-box {
+        height: 60px;
+        font-size: 8px;
+    }
+}

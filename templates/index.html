@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>排排坐</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<div class="page">
+    <header>
+        <h1>排排坐</h1>
+        <p>拖拽同学到座位上，也可以一边加人一边排座位 ✦</p>
+    </header>
+
+    <main class="main-box">
+
+        <section class="control-panel">
+            <h2>同学名单</h2>
+
+            <div class="add-box">
+                <input id="studentInput" type="text" placeholder="输入同学名字">
+                <button onclick="addStudent()">添加</button>
+            </div>
+
+            <textarea id="bulkInput" placeholder="也可以一次输入多个名字，每行一个"></textarea>
+            <button class="secondary-btn" onclick="addManyStudents()">批量添加</button>
+
+            <div class="btn-row">
+                <button onclick="clearSeats()">清空座位</button>
+            </div>
+
+            <button class="danger-btn" onclick="resetAll()">重置全部</button>
+
+            <h3>还没安排的同学</h3>
+            <div id="waitingList" class="waiting-list"></div>
+        </section>
+
+        <section class="seat-panel">
+            <div class="seat-title">
+                <h2>座位表</h2>
+                <span>5 行 × 8 列</span>
+            </div>
+            <div class="seat-title">
+                <h2>座位表</h2>
+                <span>5 行 × 8 列</span>
+            </div>
+
+            <div class="classroom-layout">
+                <div class="window-side">
+                    <div class="window-box">窗</div>
+                    <div class="window-box">窗</div>
+                    <div class="window-box">窗</div>
+                    <div class="window-box">窗</div>
+                    <div class="window-box">窗</div>
+                </div>
+
+                <div class="classroom-main">
+                    <div class="front-area">
+                        <div class="blackboard">黑板</div>
+                        <div class="podium">讲台</div>
+                    </div>
+
+                    <div id="seatMap" class="seat-map"></div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+</div>
+
+<script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
