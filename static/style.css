@@ -352,26 +352,6 @@ button {
     opacity: 0.45;
 }
 
-.remove-btn {
-    position: absolute;
-    top: 6px;
-    right: 7px;
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    background: white;
-    color: #111;
-    font-size: 12px;
-    padding: 0;
-    display: none;
-    line-height: 20px;
-    text-align: center;
-}
-
-.seat.filled .remove-btn {
-    display: block;
-}
-
 .empty-text {
     color: #aaa;
     font-size: 13px;
@@ -603,15 +583,6 @@ button {
         top: 5px;
         left: 7px;
         font-size: 9px;
-    }
-
-    .remove-btn {
-        top: 4px;
-        right: 4px;
-        width: 17px;
-        height: 17px;
-        font-size: 10px;
-        line-height: 17px;
     }
 
     input,
