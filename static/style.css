@@ -132,7 +132,7 @@ button {
 }
 
 .waiting-list {
-    height: 170px;              /* 固定高度 */
+    height: 220px;              /* 固定高度 */
     overflow-y: auto;           /* 内容太多时上下滚动 */
     overflow-x: hidden;
 
@@ -515,7 +515,7 @@ button {
     }
 
     .waiting-list {
-        height: 120px;
+        height: 150px;
     }
 }
 
