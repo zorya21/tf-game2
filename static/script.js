@@ -62,23 +62,6 @@ function shouldIgnoreClickAfterLongPress() {
     return Date.now() - lastLongPressTime < 700;
 }
 
-function addStudent() {
-    const input = document.getElementById("studentInput");
-    const name = input.value.trim();
-
-    if (name === "") {
-        alert("请输入同学名字哦");
-        return;
-    }
-
-    students.push({
-        id: Date.now() + Math.random(),
-        name: name
-    });
-
-    input.value = "";
-    renderAll();
-}
 
 function addManyStudents() {
     const textarea = document.getElementById("bulkInput");
@@ -404,9 +387,3 @@ function resetAll() {
     localStorage.clear();
     renderAll();
 }
-
-document.getElementById("studentInput").addEventListener("keydown", event => {
-    if (event.key === "Enter") {
-        addStudent();
-    }
-});
