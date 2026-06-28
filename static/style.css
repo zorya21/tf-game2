@@ -351,11 +351,6 @@ button {
     }
 }
 
-.seat.drag-over {
-    outline: 3px dashed #999;
-    background: #e9e9e9;
-}
-
 .seat-number {
     position: absolute;
     top: 7px;
@@ -496,6 +491,28 @@ button {
         padding: 8px 12px;
         font-size: 13px;
         margin-bottom: 7px;
+    }
+
+    /* 统一点击手感：电脑 / iPad / 手机都不拖拽，只点击 */
+    .student-card,
+    .seat {
+        -webkit-tap-highlight-color: transparent;
+        -webkit-touch-callout: none;
+        touch-action: manipulation;
+        user-select: none;
+        cursor: pointer;
+    }
+
+    /* 座位里的人名也禁止被长按选中文字 */
+    .seat-name {
+        user-select: none;
+        pointer-events: none;
+    }
+
+    /* 长按时给一点点反馈，手感更明显 */
+    .student-card:active,
+    .seat:active {
+        transform: scale(0.98);
     }
 
     .seat-title {
