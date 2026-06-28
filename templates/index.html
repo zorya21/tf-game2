@@ -10,7 +10,7 @@
 <div class="page">
     <header>
         <h1>排排坐</h1>
-        <p>点击安排/交换座位，双击取消，长按删除 ✦</p>
+        <p>点击安排/交换座位，双击取消 ✦</p>
     </header>
 
     <main class="main-box">
@@ -18,8 +18,8 @@
         <section class="control-panel">
             <h2>同学名单</h2>
 
-            <textarea id="bulkInput" placeholder="也可以一次输入多个名字，每行一个"></textarea>
-            <button class="secondary-btn" onclick="addManyStudents()">批量添加</button>
+            <textarea id="bulkInput" placeholder="可以一次输入多个名字，每行一个"></textarea>
+            <button class="secondary-btn" onclick="addManyStudents()">添加同学</button>
 
             <div class="btn-row">
                 <button onclick="clearSeats()">清空座位</button>
@@ -27,7 +27,19 @@
 
             <button class="danger-btn" onclick="resetAll()">重置全部</button>
 
-            <h3>还没安排的同学</h3>
+            <div class="waiting-header">
+                <h3>还没安排的同学</h3>
+
+                <div class="waiting-actions">
+                    <button id="renameBtn" class="mini-btn" onclick="renameSelectedStudent()" disabled>
+                        修改
+                    </button>
+                    <button id="deleteBtn" class="mini-btn delete-mini-btn" onclick="deleteSelectedStudent()" disabled>
+                        删除
+                    </button>
+                </div>
+            </div>
+
             <div id="waitingList" class="waiting-list"></div>
         </section>
 
