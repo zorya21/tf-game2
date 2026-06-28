@@ -108,9 +108,11 @@ button {
     white-space: nowrap;
 }
 
-button:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.16);
+@media (hover: hover) and (pointer: fine) {
+    button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 18px rgba(0, 0, 0, 0.16);
+    }
 }
 
 .secondary-btn {
@@ -302,9 +304,32 @@ button:hover {
     word-break: break-all;
 }
 
-.seat:hover {
-    background: #f0f0f0;
-    transform: translateY(-2px);
+/* 只有电脑鼠标端才启用 hover 效果 */
+@media (hover: hover) and (pointer: fine) {
+    .seat:hover {
+        background: #f0f0f0;
+        transform: translateY(-2px);
+    }
+}
+
+/* 手机 / iPad 触屏端取消点击后残留的 hover 状态 */
+@media (hover: none), (pointer: coarse) {
+    .seat {
+        -webkit-tap-highlight-color: transparent;
+        touch-action: manipulation;
+    }
+
+    .seat:hover {
+        background: #fbfbfb;
+        transform: none;
+    }
+
+    .seat.filled:hover {
+        background: #111;
+        color: white;
+        border-color: #111;
+        transform: none;
+    }
 }
 
 .seat.filled {
