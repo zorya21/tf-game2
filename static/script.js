@@ -2,13 +2,24 @@ const TOTAL_SEATS = 40;
 
 let students = [];
 let seats = Array(TOTAL_SEATS).fill(null);
+
+// 当前选中的同学
 let selectedStudentId = null;
 
+// 如果这个同学来自座位，记录原座位；如果来自未安排名单，就是 null
+let selectedSourceSeatIndex = null;
+
+// 用来判断双击 / 双点取消座位
 let lastTapSeatIndex = null;
 let lastTapTime = 0;
+const DOUBLE_TAP_TIME = 350;
 
 loadData();
 renderAll();
+
+function isTouchDevice() {
+    return window.matchMedia("(pointer: coarse)").matches;
+}
 
 function saveData() {
     localStorage.setItem("students", JSON.stringify(students));
@@ -36,6 +47,11 @@ function renderAll() {
     renderWaitingList();
     renderSeats();
     saveData();
+}
+
+function clearSelection() {
+    selectedStudentId = null;
+    selectedSourceSeatIndex = null;
 }
 
 function addStudent() {
@@ -104,21 +120,25 @@ function renderWaitingList() {
         const card = document.createElement("div");
         card.className = "student-card";
         card.textContent = student.name;
-        card.draggable = true;
 
-        if (selectedStudentId === student.id) {
+        if (selectedStudentId === student.id && selectedSourceSeatIndex === null) {
             card.classList.add("selected");
         }
 
+        // 手机 / iPad / 电脑都可以点一下选择
         card.addEventListener("click", () => {
-            selectedStudentId = student.id;
-            renderAll();
+            selectStudentFromWaiting(student.id);
         });
 
-        card.addEventListener("dragstart", event => {
-            event.dataTransfer.setData("sourceType", "waiting");
-            event.dataTransfer.setData("studentId", student.id);
-        });
+        // 电脑端保留拖拽，移动端不强制拖拽
+        if (!isTouchDevice()) {
+            card.draggable = true;
+
+            card.addEventListener("dragstart", event => {
+                event.dataTransfer.setData("sourceType", "waiting");
+                event.dataTransfer.setData("studentId", student.id);
+            });
+        }
 
         waitingList.appendChild(card);
     });
@@ -141,15 +161,21 @@ function renderSeats() {
                 seat.classList.add("filled");
             }
 
+            if (selectedSourceSeatIndex === seatIndex) {
+                seat.classList.add("selected-seat");
+            }
+
             seat.innerHTML = `
                 <span class="seat-number">${row + 1}-${col + 1}</span>
                 <span>${seats[seatIndex] ? seats[seatIndex].name : "空座"}</span>
             `;
 
+            // 统一手感：点击座位
             seat.addEventListener("click", () => {
                 handleSeatClick(seatIndex);
             });
 
+            // 电脑端拖拽功能
             seat.addEventListener("dragover", event => {
                 event.preventDefault();
                 seat.classList.add("drag-over");
@@ -175,10 +201,11 @@ function renderSeats() {
                     swapSeats(fromSeatIndex, seatIndex);
                 }
 
+                clearSelection();
                 renderAll();
             });
 
-            if (seats[seatIndex]) {
+            if (seats[seatIndex] && !isTouchDevice()) {
                 seat.draggable = true;
 
                 seat.addEventListener("dragstart", event => {
@@ -194,40 +221,84 @@ function renderSeats() {
     }
 }
 
-function placeSelectedStudent(seatIndex) {
-    if (selectedStudentId === null) {
-        return;
+function selectStudentFromWaiting(studentId) {
+    // 如果已经选中了这个未安排同学，再点一次就是取消选择
+    if (selectedStudentId === studentId && selectedSourceSeatIndex === null) {
+        clearSelection();
+    } else {
+        selectedStudentId = studentId;
+        selectedSourceSeatIndex = null;
     }
 
-    placeStudentById(selectedStudentId, seatIndex);
-    selectedStudentId = null;
     renderAll();
 }
 
 function handleSeatClick(seatIndex) {
-    // 如果已经选中了一个同学，单击座位就是安排同学
-    if (selectedStudentId !== null) {
-        placeSelectedStudent(seatIndex);
-        return;
-    }
-
-    // 如果没有选中同学，双击已经有人的座位就是取消安排
     const now = Date.now();
+    const hasStudent = seats[seatIndex] !== null;
 
-    if (
-        seats[seatIndex] &&
+    const isDoubleTapSameSeat =
+        hasStudent &&
         lastTapSeatIndex === seatIndex &&
-        now - lastTapTime < 350
+        now - lastTapTime < DOUBLE_TAP_TIME;
+
+    // 双击 / 双点已有人的座位：取消安排
+    if (
+        isDoubleTapSameSeat &&
+        (selectedStudentId === null || selectedSourceSeatIndex === seatIndex)
     ) {
         seats[seatIndex] = null;
         lastTapSeatIndex = null;
         lastTapTime = 0;
+        clearSelection();
         renderAll();
         return;
     }
 
     lastTapSeatIndex = seatIndex;
     lastTapTime = now;
+
+    // 如果已经选中了一个同学，点座位就是移动 / 安排 / 交换
+    if (selectedStudentId !== null) {
+        if (selectedSourceSeatIndex === seatIndex) {
+            // 点回原座位，不做移动，保持选中状态
+            return;
+        }
+
+        if (selectedSourceSeatIndex !== null) {
+            moveStudentFromSeatToSeat(selectedSourceSeatIndex, seatIndex);
+        } else {
+            placeStudentById(selectedStudentId, seatIndex);
+        }
+
+        clearSelection();
+        renderAll();
+        return;
+    }
+
+    // 如果没有选中任何同学，点一个已经有人的座位，就是选中这个同学
+    if (hasStudent) {
+        selectedStudentId = seats[seatIndex].id;
+        selectedSourceSeatIndex = seatIndex;
+        renderAll();
+    }
+}
+
+function moveStudentFromSeatToSeat(fromSeatIndex, toSeatIndex) {
+    if (fromSeatIndex === toSeatIndex) {
+        return;
+    }
+
+    const movingStudent = seats[fromSeatIndex];
+
+    if (!movingStudent) {
+        return;
+    }
+
+    const targetStudent = seats[toSeatIndex];
+
+    seats[toSeatIndex] = movingStudent;
+    seats[fromSeatIndex] = targetStudent;
 }
 
 function placeStudentById(studentId, seatIndex) {
@@ -237,12 +308,14 @@ function placeStudentById(studentId, seatIndex) {
         return;
     }
 
+    // 如果这个同学之前已经坐在别的位置，先清掉原位置
     for (let i = 0; i < seats.length; i++) {
         if (seats[i] && seats[i].id === studentId) {
             seats[i] = null;
         }
     }
 
+    // 如果目标座位原来有人，那个人会自动回到“未安排的同学”
     seats[seatIndex] = student;
 }
 
@@ -258,7 +331,7 @@ function swapSeats(fromSeatIndex, toSeatIndex) {
 
 function clearSeats() {
     seats = Array(TOTAL_SEATS).fill(null);
-    selectedStudentId = null;
+    clearSelection();
     renderAll();
 }
 
@@ -271,7 +344,7 @@ function resetAll() {
 
     students = [];
     seats = Array(TOTAL_SEATS).fill(null);
-    selectedStudentId = null;
+    clearSelection();
     localStorage.clear();
     renderAll();
 }
