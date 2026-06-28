@@ -14,10 +14,6 @@ let lastTapSeatIndex = null;
 let lastTapTime = 0;
 const DOUBLE_TAP_TIME = 350;
 
-// 长按删除相关
-const LONG_PRESS_TIME = 650;
-let lastLongPressTime = 0;
-
 loadData();
 renderAll();
 
@@ -50,6 +46,7 @@ function loadData() {
 function renderAll() {
     renderWaitingList();
     renderSeats();
+    renderActionButtons();
     saveData();
 }
 
@@ -58,10 +55,27 @@ function clearSelection() {
     selectedSourceSeatIndex = null;
 }
 
-function shouldIgnoreClickAfterLongPress() {
-    return Date.now() - lastLongPressTime < 700;
+function getSelectedStudent() {
+    if (selectedStudentId === null) {
+        return null;
+    }
+
+    return students.find(student => student.id === selectedStudentId) || null;
 }
 
+function renderActionButtons() {
+    const renameBtn = document.getElementById("renameBtn");
+    const deleteBtn = document.getElementById("deleteBtn");
+
+    if (!renameBtn || !deleteBtn) {
+        return;
+    }
+
+    const hasSelectedStudent = getSelectedStudent() !== null;
+
+    renameBtn.disabled = !hasSelectedStudent;
+    deleteBtn.disabled = !hasSelectedStudent;
+}
 
 function addManyStudents() {
     const textarea = document.getElementById("bulkInput");
@@ -116,17 +130,9 @@ function renderWaitingList() {
             card.classList.add("selected");
         }
 
-        // 单击选择未安排同学
         card.addEventListener("click", () => {
-            if (shouldIgnoreClickAfterLongPress()) {
-                return;
-            }
-
             selectStudentFromWaiting(student.id);
         });
-
-        // 长按彻底删除同学
-        addLongPressDelete(card, student.id);
 
         waitingList.appendChild(card);
     });
@@ -158,19 +164,9 @@ function renderSeats() {
                 <span class="seat-name">${seats[seatIndex] ? seats[seatIndex].name : "空座"}</span>
             `;
 
-            // 单击座位：安排 / 选择 / 移动 / 交换
             seat.addEventListener("click", () => {
-                if (shouldIgnoreClickAfterLongPress()) {
-                    return;
-                }
-
                 handleSeatClick(seatIndex);
             });
-
-            // 如果座位上有人，长按这个名字也可以彻底删除同学
-            if (seats[seatIndex]) {
-                addLongPressDelete(seat, seats[seatIndex].id);
-            }
 
             rowDiv.appendChild(seat);
         }
@@ -219,7 +215,6 @@ function handleSeatClick(seatIndex) {
     // 如果已经选中了一个同学，点座位就是安排 / 移动 / 交换
     if (selectedStudentId !== null) {
         if (selectedSourceSeatIndex === seatIndex) {
-            // 点回原座位，不移动
             return;
         }
 
@@ -278,10 +273,45 @@ function placeStudentById(studentId, seatIndex) {
     seats[seatIndex] = student;
 }
 
-function deleteStudentWithConfirm(studentId) {
-    const student = students.find(item => item.id === studentId);
+function renameSelectedStudent() {
+    const student = getSelectedStudent();
 
     if (!student) {
+        alert("请先点击一个同学名字，再点击修改。");
+        return;
+    }
+
+    const newName = prompt(`把「${student.name}」修改为：`, student.name);
+
+    if (newName === null) {
+        return;
+    }
+
+    const trimmedName = newName.trim();
+
+    if (trimmedName === "") {
+        alert("名字不能为空哦。");
+        return;
+    }
+
+    // 修改名单里的名字
+    student.name = trimmedName;
+
+    // 如果这个同学已经在座位上，也同步修改座位里的名字
+    for (let i = 0; i < seats.length; i++) {
+        if (seats[i] && seats[i].id === student.id) {
+            seats[i].name = trimmedName;
+        }
+    }
+
+    renderAll();
+}
+
+function deleteSelectedStudent() {
+    const student = getSelectedStudent();
+
+    if (!student) {
+        alert("请先点击一个同学名字，再点击删除。");
         return;
     }
 
@@ -294,78 +324,17 @@ function deleteStudentWithConfirm(studentId) {
     }
 
     // 从学生名单里删除
-    students = students.filter(item => item.id !== studentId);
+    students = students.filter(item => item.id !== student.id);
 
     // 从座位表里删除
     for (let i = 0; i < seats.length; i++) {
-        if (seats[i] && seats[i].id === studentId) {
+        if (seats[i] && seats[i].id === student.id) {
             seats[i] = null;
         }
     }
 
-    if (selectedStudentId === studentId) {
-        clearSelection();
-    }
-
+    clearSelection();
     renderAll();
-}
-
-function addLongPressDelete(element, studentId) {
-    let pressTimer = null;
-    let startX = 0;
-    let startY = 0;
-    let hasMoved = false;
-
-    element.addEventListener("pointerdown", event => {
-        // 鼠标右键不触发
-        if (event.button !== undefined && event.button !== 0) {
-            return;
-        }
-
-        hasMoved = false;
-        startX = event.clientX;
-        startY = event.clientY;
-
-        pressTimer = setTimeout(() => {
-            lastLongPressTime = Date.now();
-            clearSelection();
-            deleteStudentWithConfirm(studentId);
-        }, LONG_PRESS_TIME);
-    });
-
-    element.addEventListener("pointermove", event => {
-        const moveX = Math.abs(event.clientX - startX);
-        const moveY = Math.abs(event.clientY - startY);
-
-        if (moveX > 10 || moveY > 10) {
-            hasMoved = true;
-            clearPressTimer();
-        }
-    });
-
-    element.addEventListener("pointerup", () => {
-        clearPressTimer();
-    });
-
-    element.addEventListener("pointerleave", () => {
-        clearPressTimer();
-    });
-
-    element.addEventListener("pointercancel", () => {
-        clearPressTimer();
-    });
-
-    // 防止手机长按时弹出浏览器自带菜单
-    element.addEventListener("contextmenu", event => {
-        event.preventDefault();
-    });
-
-    function clearPressTimer() {
-        if (pressTimer) {
-            clearTimeout(pressTimer);
-            pressTimer = null;
-        }
-    }
 }
 
 function clearSeats() {
