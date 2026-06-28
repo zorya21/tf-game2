@@ -132,11 +132,16 @@ button {
 }
 
 .waiting-list {
-    min-height: 160px;
+    height: 170px;              /* 固定高度 */
+    overflow-y: auto;           /* 内容太多时上下滚动 */
+    overflow-x: hidden;
+
     border: 1px dashed #bbb;
     border-radius: 20px;
     padding: 12px;
     background: #f7f7f7;
+
+    -webkit-overflow-scrolling: touch; /* iPhone/iPad 滚动更顺滑 */
 }
 
 .student-card {
@@ -151,11 +156,6 @@ button {
     margin-right: 6px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
     user-select: none;
-}
-
-.student-card.selected {
-    background: #111;
-    color: white;
 }
 
 .student-card.selected {
@@ -515,7 +515,7 @@ button {
     }
 
     .waiting-list {
-        min-height: 100px;
+        height: 120px;
     }
 }
 
@@ -664,6 +664,10 @@ button {
     textarea {
         font-size: 14px;
         border-radius: 14px;
+    }
+
+    .waiting-list {
+        height: 130px;
     }
 }
 
