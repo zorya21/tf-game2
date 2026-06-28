@@ -4,6 +4,9 @@ let students = [];
 let seats = Array(TOTAL_SEATS).fill(null);
 let selectedStudentId = null;
 
+let lastTapSeatIndex = null;
+let lastTapTime = 0;
+
 loadData();
 renderAll();
 
@@ -143,22 +146,8 @@ function renderSeats() {
                 <span>${seats[seatIndex] ? seats[seatIndex].name : "空座"}</span>
             `;
 
-            if (seats[seatIndex]) {
-                const removeBtn = document.createElement("button");
-                removeBtn.className = "remove-btn";
-                removeBtn.textContent = "×";
-
-                removeBtn.onclick = event => {
-                    event.stopPropagation();
-                    seats[seatIndex] = null;
-                    renderAll();
-                };
-
-                seat.appendChild(removeBtn);
-            }
-
             seat.addEventListener("click", () => {
-                placeSelectedStudent(seatIndex);
+                handleSeatClick(seatIndex);
             });
 
             seat.addEventListener("dragover", event => {
@@ -213,6 +202,32 @@ function placeSelectedStudent(seatIndex) {
     placeStudentById(selectedStudentId, seatIndex);
     selectedStudentId = null;
     renderAll();
+}
+
+function handleSeatClick(seatIndex) {
+    // 如果已经选中了一个同学，单击座位就是安排同学
+    if (selectedStudentId !== null) {
+        placeSelectedStudent(seatIndex);
+        return;
+    }
+
+    // 如果没有选中同学，双击已经有人的座位就是取消安排
+    const now = Date.now();
+
+    if (
+        seats[seatIndex] &&
+        lastTapSeatIndex === seatIndex &&
+        now - lastTapTime < 350
+    ) {
+        seats[seatIndex] = null;
+        lastTapSeatIndex = null;
+        lastTapTime = 0;
+        renderAll();
+        return;
+    }
+
+    lastTapSeatIndex = seatIndex;
+    lastTapTime = now;
 }
 
 function placeStudentById(studentId, seatIndex) {
